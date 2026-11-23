@@ -137,16 +137,20 @@ footer { background: #efedf1; border-top: 1px solid var(--border); padding-block
   .mobile-nav summary::before { content: ""; width: .9rem; height: .65rem; border-block: 2px solid currentColor; background: linear-gradient(currentColor,currentColor) center / 100% 2px no-repeat; }
   .mobile-nav[open] nav { width: 100%; display: grid; gap: .15rem; padding-block: .5rem; border-top: 1px solid var(--border); }
   .mobile-nav nav a { padding: .6rem; }
+  .mobile-nav nav a.is-active { text-decoration: underline; text-underline-offset: .3em; }
   .mobile-nav nav .primary { color: #fff; justify-self: start; }
   .header-inner { gap: .5rem; padding-block: .55rem; min-height: auto; }
   .languages a { display: flex; align-items: center; min-height: 2.4rem; }
 }
 @media (max-width: 42rem) {
   .frame { width: calc(100% - 2rem); }
-  .header-logo { width: clamp(6.1rem, 29vw, 11rem); }
-  .languages a { padding-inline: .22rem; font-size: .78rem; }
-  .mobile-nav summary { font-size: .86rem; padding-inline: .48rem; }
-  .languages { gap: .12rem; }
+  .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .header-logo { width: min(10rem, 100%); }
+  .header-actions { grid-column: 1 / -1; }
+  .languages { gap: .25rem; }
+  .languages a { min-height: 2.75rem; padding-inline: .6rem; font-size: .875rem; }
+  .mobile-nav summary { grid-column: 2; grid-row: 1; font-size: .875rem; padding-inline: .7rem; }
+  .mobile-nav[open] nav { grid-column: 1 / -1; }
   .hero-inner { grid-template-columns: 1fr; gap: 1.6rem; }
   .hero-art { aspect-ratio: 2.05; }
   .hero h1 { font-size: clamp(2.4rem, 10vw, 4rem); }

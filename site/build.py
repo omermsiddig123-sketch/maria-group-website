@@ -48,10 +48,23 @@ OFFICES = (
     ("Maria Multi Activities Co. Ltd. offices", "Al Aghareeq District, beside the Bank of Africa and Gulf, Port Sudan, Sudan", "Al Omda District, opposite Al Baraka Bank, Omdurman, Sudan"),
     ("Maria Multi Activities Co. Ltd. 办公地点", "苏丹港阿加里格区，非洲及海湾银行旁，苏丹", "恩图曼阿尔欧姆达区，巴拉卡银行对面，苏丹"),
 )
+EMAIL_WHATSAPP = ("البريد الإلكتروني وواتساب", "Email & WhatsApp", "电子邮件与 WhatsApp")
 SUBJECT_FIELDS = (
-    "Company:\nProduct / specifications:\nQuantity / packaging:\nDestination / delivery terms:\nReply contact:",
-    "Company:\nProduct / country of origin:\nSpecifications / packing:\nQuantity / lead time:\nReply contact:",
-    "Requesting company:\nDocument required:\nPurpose:\nReply contact:",
+    (
+        "الشركة:\nالمنتج والمواصفات:\nالكمية والتعبئة:\nالوجهة وشروط التسليم:\nبيانات التواصل:",
+        "الشركة:\nالمنتج وبلد المنشأ:\nالمواصفات والتعبئة:\nالكمية ومدة التوريد:\nبيانات التواصل:",
+        "الشركة الطالبة:\nالمستند المطلوب:\nالغرض:\nبيانات التواصل:",
+    ),
+    (
+        "Company:\nProduct / specifications:\nQuantity / packaging:\nDestination / delivery terms:\nReply contact:",
+        "Company:\nProduct / country of origin:\nSpecifications / packing:\nQuantity / lead time:\nReply contact:",
+        "Requesting company:\nDocument required:\nPurpose:\nReply contact:",
+    ),
+    (
+        "公司：\n产品及规格：\n数量及包装：\n目的地及交货条件：\n联系方式：",
+        "公司：\n产品及原产国：\n规格及包装：\n数量及交货周期：\n联系方式：",
+        "申请公司：\n所需资料：\n用途：\n联系方式：",
+    ),
 )
 
 def path_to(lang, page):
@@ -92,13 +105,14 @@ def render(i, page):
 
     def enquiry_links():
         topics = (BUYER, SUPPLIER, DOCS)
-        subjects = ("Quotation request", "Supplier proposal", "Company documents enquiry")
         buttons = []
-        for j, (labels, subject, body) in enumerate(zip(topics, subjects, SUBJECT_FIELDS)):
-            href = f"mailto:info@maria.sd?subject={quote('Maria Group | ' + subject)}&amp;body={quote(body)}"
+        for j, (labels, body) in enumerate(zip(topics, SUBJECT_FIELDS[i])):
+            encoded_body = quote(body.replace("\n", "\r\n"))
+            href = f"mailto:info@maria.sd?subject={quote(NAME[i] + ' | ' + labels[i])}&amp;body={encoded_body}"
             buttons.append(f'<a class="button {"primary" if j == 0 else "outline"}" href="{href}">{labels[i]}</a>')
         return '<div class="actions">' + "".join(buttons) + f'</div><p class="note">{EMAIL_HINT[i]}</p>'
 
+    footer_name = '<span dir="ltr" lang="en">Maria Group Co. Ltd.</span>' if lang != "en" else ""
     langs = "".join(f'<a href="{url(page, target)}" lang="{target if target != "zh" else "zh-Hans"}"'
                     + (' aria-current="page"' if target == lang else "") + f'>{label}</a>'
                     for target, label in zip(LANGS, LABELS))
@@ -109,8 +123,8 @@ def render(i, page):
 <header class="header"><div class="frame header-inner">
 <a class="brand" href="{url('')}" aria-label="{HOME[i]}">{logo('maria-header-web.webp', NAME[i], 'header-logo')}</a>
 <nav class="desktop-nav" aria-label="{MENU[i]}">{nav}</nav>
-<div class="header-actions"><div class="languages">{langs}</div>{contact_link}</div>
 <details class="mobile-nav"><summary>{MENU[i]}</summary><nav aria-label="{MENU[i]}">{nav}{contact_link}</nav></details>
+<div class="header-actions"><div class="languages">{langs}</div>{contact_link}</div>
 </div></header>'''
 
     if not page:
@@ -155,13 +169,13 @@ def render(i, page):
             body += f'<section class="frame section enquiry"><h2>{PAGES["contact"][i] if page == "partnerships" else BUYER[i]}</h2>{enquiry_links()}</section>'
         if page == "contact":
             body += f'''<section class="frame section contact-methods">
-<div class="contact-card"><h2>Email &amp; WhatsApp</h2><a dir="ltr" href="mailto:info@maria.sd">info@maria.sd</a>
+<div class="contact-card"><h2>{escape(EMAIL_WHATSAPP[i])}</h2><a dir="ltr" href="mailto:info@maria.sd">info@maria.sd</a>
 <a dir="ltr" href="https://wa.me/249912336204">WhatsApp +249 912336204</a><a dir="ltr" href="tel:+249912500211">+249 912500211</a></div>
 <div class="contact-card"><h2>WeChat</h2><a dir="ltr" href="#wechat-qr">+249 912500211</a><p>{QR_HINT[i]}</p>
 <a class="qr-link" id="wechat-qr" href="{asset('wechat-contact-qr.jpg')}">{logo('wechat-contact-qr.jpg', QR_LINK[i], 'qr')}<span>{QR_LINK[i]}</span></a></div>
 <div class="contact-card"><h2>{OFFICES[i][0]}</h2><p>{OFFICES[i][1]}</p><p>{OFFICES[i][2]}</p></div></section>'''
     footer = f'''<footer><div class="frame footer-inner"><div><strong>{NAME[i]}</strong>
-<span dir="ltr">Maria Group Co. Ltd.</span></div><nav aria-label="{MENU[i]}">
+{footer_name}</div><nav aria-label="{MENU[i]}">
 {link('about',PAGES['about'][i])}{link('companies',PAGES['companies'][i])}{link('contact',PAGES['contact'][i])}</nav></div></footer>'''
     html_lang = "zh-Hans" if lang == "zh" else lang
     heading = f"{title} | {NAME[i]}" if page else title
