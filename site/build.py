@@ -185,7 +185,6 @@ def render(i, page):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
 <meta name="description" content="{escape(description)}">
 <title>{escape(heading)}</title>
 <link rel="icon" href="{asset('favicon.png')}">

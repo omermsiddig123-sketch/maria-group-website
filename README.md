@@ -4,4 +4,4 @@ The Arabic, English and Simplified Chinese editions are static HTML. Update the 
 
 To review locally, open `index.html` in a browser or run `python3 -m http.server 8080` from the repository root.
 
-The three existing PDFs are retained byte for byte. They contain Rodeena statements requiring approval, so the review edition directs document enquiries to email. The independent Rodeena concept is in `review/rodeena.md`. All review pages include a noindex directive. Official indexing and sitemap changes belong in the publication review.
+The three existing PDFs are retained byte for byte. They contain Rodeena statements requiring approval, so the review edition directs document enquiries to email. The independent Rodeena concept is in `review/rodeena.md`. The sitemap lists the three published language homepages.
