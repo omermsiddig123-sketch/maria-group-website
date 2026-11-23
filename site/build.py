@@ -39,6 +39,15 @@ DOCS = ("طلب مستندات الشركة", "Request company documents", "索�
 EMAIL_HINT = ("يفتح الزر مسودة في تطبيق البريد.", "This button opens a draft in your email app.", "此按钮会在邮件应用中打开邮件草稿。")
 ENQUIRIES = ("الاستفسارات", "Enquiries", "业务咨询")
 RODEENA = ("رودينا (RODEENA)", "RODEENA", "RODEENA")
+MARIA_MULTI = ("شركة ماريا للأنشطة المتعددة المحدودة", "Maria Multi Activities Co. Ltd.", "Maria Multi Activities Co. Ltd.")
+INDUSTRIES = ("مصانع راينو وأنشطتها", "RHINO manufacturing", "RHINO 制造业务")
+EXPORT_PRODUCTS = ("منتجات التصدير", "Export products", "出口产品")
+COMPANY_LINK = ("عرض شركات المجموعة", "View group companies", "查看集团企业")
+STATUS_ACTIVE = ("قيد التشغيل", "Operational", "已投产")
+STATUS_SOON = ("قريباً", "Coming soon", "即将推出")
+FACTORY_STATUS = dict.fromkeys(("oil", "iron", "biscuits"), STATUS_ACTIVE)
+FACTORY_STATUS.update(dict.fromkeys(("beverages", "tomato"), STATUS_SOON))
+
 QR_HINT = ("امسح الرمز في WeChat، أو افتح الصورة واحفظها للمسح من ألبوم هاتفك.",
            "Scan in WeChat, or open and save the image to scan from your phone’s photo album.",
            "请使用微信扫码，或打开并保存图片后从手机相册识别。")
@@ -80,7 +89,9 @@ def render(i, page):
         entry = PAGES[key]
         emblem = logo(f"maria-image-{entry[7]}.webp", "", "card-image") if len(entry) > 7 else ""
         summary_text = f'<p>{escape(entry[3+i])}</p>' if summary else ""
-        return f'<a class="card" href="{url(key)}">{emblem}<h3>{escape(entry[i])}</h3>{summary_text}<span>{DETAIL[i]}</span></a>'
+        status = FACTORY_STATUS.get(key)
+        status_text = f'<small class="factory-status">{status[i]}</small>' if status else ""
+        return f'<a class="card" href="{url(key)}">{emblem}{status_text}<h3>{escape(entry[i])}</h3>{summary_text}<span>{DETAIL[i]}</span></a>'
 
     def sector_panel(key, label):
         entry = PAGES[key]
@@ -90,6 +101,12 @@ def render(i, page):
 
     def cards(keys, summary=False):
         return '<div class="cards">' + "".join(card(key, summary) for key in keys) + "</div>"
+
+    def company_cards():
+        return f"""<div class="company-cards">
+<article class="company-card">{logo('maria-image-01.webp', '', 'company-emblem')}<h3>{MARIA_MULTI[i]}</h3><p>{escape(PAGES['companies'][3+i])}</p></article>
+<article class="company-card"><h3>{RODEENA[i]}</h3></article>
+</div>"""
 
     def document_request():
         subject = quote(NAME[i] + " | " + DOCS[i])
@@ -115,7 +132,6 @@ def render(i, page):
 
     if not page:
         title, description = NAME[i], HERO_TEXT[i]
-        company = ("شركة ماريا للأنشطة المتعددة المحدودة", "Maria Multi Activities Co. Ltd.", "Maria Multi Activities Co. Ltd.")
         body = f'''<section class="hero"><div class="frame hero-inner">
 <div class="hero-copy"><p class="eyebrow">{NAME[i]}</p><h1>{HERO[i]}</h1><p class="lead">{description}</p>
 <div class="actions">{link('sectors', PAGES['sectors'][i], 'button light')}{link('partnerships', PAGES['partnerships'][i], 'button ghost')}</div></div>
@@ -130,10 +146,16 @@ def render(i, page):
 <h2 id="sectors-title">{BUSINESS[i]}</h2>
 <div class="sector-panels">{sector_panel('industry', ART_LABELS[i][0])}{sector_panel('trade', ART_LABELS[i][1])}</div>
 </div></section>
+<section class="frame section home-discovery" aria-labelledby="factories-title">
+<h2 id="factories-title">{INDUSTRIES[i]}</h2>{cards(PAGES['industry'][6].split())}
+</section>
+<section class="home-sectors" aria-labelledby="export-title"><div class="frame">
+<h2 id="export-title">{EXPORT_PRODUCTS[i]}</h2>{cards(('sesame', 'groundnuts'))}
+<p class="section-link">{link('exports', PAGES['exports'][i], 'text-link')}</p></div></section>
 <div class="frame home-portfolio">
 <section aria-labelledby="companies-title"><h2 id="companies-title">{PAGES['companies'][i]}</h2>
-<a class="company-panel" href="{url('companies')}">{logo('maria-image-01.webp', '', 'company-emblem')}<strong>{company[i]}</strong><span>{DETAIL[i]}</span></a>
-<p class="company-panel company-name"><strong>{RODEENA[i]}</strong></p></section>
+{company_cards()}
+<p class="section-link">{link('companies', COMPANY_LINK[i], 'text-link')}</p></section>
 <section aria-labelledby="brands-title"><h2 id="brands-title">{PAGES['brands'][i]}</h2>
 <div class="brand-grid">{''.join(link(key, label, 'brand-tile') for key, label in (('rhino', 'RHINO'), ('sila', 'SILA'), ('al-afaf', 'AL AFAF')))}</div></section>
 </div>
@@ -150,9 +172,12 @@ def render(i, page):
 <div class="page-heading"><div><h1>{escape(title)}</h1><p class="lead">{escape(description)}</p></div>{emblem}</div>
 </div></section>'''
         if page == "companies":
-            body += f'<section class="frame section" aria-label="{escape(RODEENA[i])}"><h2>{RODEENA[i]}</h2></section>'
+            body += f'<section class="frame section" aria-labelledby="companies-list"><h2 id="companies-list">{title}</h2>{company_cards()}</section>'
+            body += f'<section class="frame section"><h2>{INDUSTRIES[i]}</h2>{cards(PAGES["industry"][6].split())}<p class="section-link">{link("industry", PAGES["industry"][i], "text-link")}</p></section>'
+        if page == "exports":
+            body += f'<section class="frame section"><h2>{EXPORT_PRODUCTS[i]}</h2>{cards(("sesame", "groundnuts"), True)}<p class="section-link">{link("contact", PAGES["contact"][i], "button primary")}</p></section>'
         keys = entry[6].split()
-        if keys:
+        if keys and page not in {"companies", "exports"}:
             body += f'<section class="frame section"><h2>{RELATED[i]}</h2>{cards(keys, page in {"sectors", "industry", "brands", "trade"})}</section>'
         if page in {"partnerships", "contact"}:
             body += f'<section class="frame section enquiry"><h2>{ENQUIRIES[i]}</h2>{document_request()}</section>'
