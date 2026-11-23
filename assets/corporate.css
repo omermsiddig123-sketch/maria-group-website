@@ -95,11 +95,12 @@ h3 { font-size: 1.33rem; }
 .home-portfolio { gap: clamp(1.2rem, 4vw, 4rem); padding-block: clamp(2.4rem, 5vw, 4.5rem); }
 .home-portfolio h2 { margin-block-end: 1rem; }
 .company-panel, .brand-tile { display: flex; align-items: center; gap: .9rem; min-height: 6.3rem; padding: 1rem; border: 1px solid var(--border); border-radius: 8px; color: var(--wine); text-decoration: none; background: #fff; }
+.company-name { margin-block-start: .55rem; }
 .company-panel span { margin-inline-start: auto; font-weight: 650; text-decoration: underline; }
 .company-emblem { width: 3.7rem; aspect-ratio: 1; object-fit: contain; }
 .brand-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .55rem; }
 .brand-tile { justify-content: center; padding-inline: .3rem; font-weight: 740; text-align: center; }
-.company-panel:hover, .brand-tile:hover { background: #f6eff3; border-color: var(--wine); }
+a.company-panel:hover, .brand-tile:hover { background: #f6eff3; border-color: var(--wine); }
 .home-partnership { background: #421429; color: #fff; }
 .home-partnership p { color: #f3e7ef; }
 .partnership-inner .actions { margin: 0; }

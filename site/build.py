@@ -35,10 +35,10 @@ ART_LABELS = (
 MENU = ("القائمة", "Menu", "菜单")
 SKIP = ("انتقل إلى المحتوى", "Skip to content", "跳转至内容")
 RELATED = ("استكشف المزيد", "Explore further", "继续浏览")
-BUYER = ("طلب عرض سعر", "Request a quotation", "申请报价")
-SUPPLIER = ("تقديم عرض توريد", "Submit a supplier proposal", "提交供货方案")
 DOCS = ("طلب مستندات الشركة", "Request company documents", "索取企业资料")
-EMAIL_HINT = ("تفتح الروابط مسودة في تطبيق البريد.", "These links open a draft in your email app.", "这些链接会在邮件应用中打开邮件草稿。")
+EMAIL_HINT = ("يفتح الزر مسودة في تطبيق البريد.", "This button opens a draft in your email app.", "此按钮会在邮件应用中打开邮件草稿。")
+ENQUIRIES = ("الاستفسارات", "Enquiries", "业务咨询")
+RODEENA = ("رودينا (RODEENA)", "RODEENA", "RODEENA")
 QR_HINT = ("امسح الرمز في WeChat، أو افتح الصورة واحفظها للمسح من ألبوم هاتفك.",
            "Scan in WeChat, or open and save the image to scan from your phone’s photo album.",
            "请使用微信扫码，或打开并保存图片后从手机相册识别。")
@@ -49,22 +49,10 @@ OFFICES = (
     ("Maria Multi Activities Co. Ltd. 办公地点", "苏丹港阿加里格区，非洲及海湾银行旁，苏丹", "恩图曼阿尔欧姆达区，巴拉卡银行对面，苏丹"),
 )
 EMAIL_WHATSAPP = ("البريد الإلكتروني وواتساب", "Email & WhatsApp", "电子邮件与 WhatsApp")
-SUBJECT_FIELDS = (
-    (
-        "الشركة:\nالمنتج والمواصفات:\nالكمية والتعبئة:\nالوجهة وشروط التسليم:\nبيانات التواصل:",
-        "الشركة:\nالمنتج وبلد المنشأ:\nالمواصفات والتعبئة:\nالكمية ومدة التوريد:\nبيانات التواصل:",
-        "الشركة الطالبة:\nالمستند المطلوب:\nالغرض:\nبيانات التواصل:",
-    ),
-    (
-        "Company:\nProduct / specifications:\nQuantity / packaging:\nDestination / delivery terms:\nReply contact:",
-        "Company:\nProduct / country of origin:\nSpecifications / packing:\nQuantity / lead time:\nReply contact:",
-        "Requesting company:\nDocument required:\nPurpose:\nReply contact:",
-    ),
-    (
-        "公司：\n产品及规格：\n数量及包装：\n目的地及交货条件：\n联系方式：",
-        "公司：\n产品及原产国：\n规格及包装：\n数量及交货周期：\n联系方式：",
-        "申请公司：\n所需资料：\n用途：\n联系方式：",
-    ),
+DOCUMENT_FIELDS = (
+    "الشركة الطالبة:\nالمستند المطلوب:\nالغرض:\nبيانات التواصل:",
+    "Requesting company:\nDocument required:\nPurpose:\nReply contact:",
+    "申请公司：\n所需资料：\n用途：\n联系方式：",
 )
 
 def path_to(lang, page):
@@ -103,14 +91,12 @@ def render(i, page):
     def cards(keys, summary=False):
         return '<div class="cards">' + "".join(card(key, summary) for key in keys) + "</div>"
 
-    def enquiry_links():
-        topics = (BUYER, SUPPLIER, DOCS)
-        buttons = []
-        for j, (labels, body) in enumerate(zip(topics, SUBJECT_FIELDS[i])):
-            encoded_body = quote(body.replace("\n", "\r\n"))
-            href = f"mailto:info@maria.sd?subject={quote(NAME[i] + ' | ' + labels[i])}&amp;body={encoded_body}"
-            buttons.append(f'<a class="button {"primary" if j == 0 else "outline"}" href="{href}">{labels[i]}</a>')
-        return '<div class="actions">' + "".join(buttons) + f'</div><p class="note">{EMAIL_HINT[i]}</p>'
+    def document_request():
+        subject = quote(NAME[i] + " | " + DOCS[i])
+        body = quote(DOCUMENT_FIELDS[i].replace("\n", "\r\n"))
+        href = f"mailto:info@maria.sd?subject={subject}&amp;body={body}"
+        return (f'<div class="actions"><a class="button primary" href="{href}">{DOCS[i]}</a></div>'
+                f'<p class="note">{EMAIL_HINT[i]}</p>')
 
     footer_name = '<span dir="ltr" lang="en">Maria Group Co. Ltd.</span>' if lang != "en" else ""
     langs = "".join(f'<a href="{url(page, target)}" lang="{target if target != "zh" else "zh-Hans"}"'
@@ -146,7 +132,8 @@ def render(i, page):
 </div></section>
 <div class="frame home-portfolio">
 <section aria-labelledby="companies-title"><h2 id="companies-title">{PAGES['companies'][i]}</h2>
-<a class="company-panel" href="{url('companies')}">{logo('maria-image-01.webp', '', 'company-emblem')}<strong>{company[i]}</strong><span>{DETAIL[i]}</span></a></section>
+<a class="company-panel" href="{url('companies')}">{logo('maria-image-01.webp', '', 'company-emblem')}<strong>{company[i]}</strong><span>{DETAIL[i]}</span></a>
+<p class="company-panel company-name"><strong>{RODEENA[i]}</strong></p></section>
 <section aria-labelledby="brands-title"><h2 id="brands-title">{PAGES['brands'][i]}</h2>
 <div class="brand-grid">{''.join(link(key, label, 'brand-tile') for key, label in (('rhino', 'RHINO'), ('sila', 'SILA'), ('al-afaf', 'AL AFAF')))}</div></section>
 </div>
@@ -162,11 +149,13 @@ def render(i, page):
 <div class="crumb">{link('', HOME[i])}<span aria-hidden="true">/</span><span>{escape(title)}</span></div>
 <div class="page-heading"><div><h1>{escape(title)}</h1><p class="lead">{escape(description)}</p></div>{emblem}</div>
 </div></section>'''
+        if page == "companies":
+            body += f'<section class="frame section" aria-label="{escape(RODEENA[i])}"><h2>{RODEENA[i]}</h2></section>'
         keys = entry[6].split()
         if keys:
             body += f'<section class="frame section"><h2>{RELATED[i]}</h2>{cards(keys, page in {"sectors", "industry", "brands", "trade"})}</section>'
         if page in {"partnerships", "contact"}:
-            body += f'<section class="frame section enquiry"><h2>{PAGES["contact"][i] if page == "partnerships" else BUYER[i]}</h2>{enquiry_links()}</section>'
+            body += f'<section class="frame section enquiry"><h2>{ENQUIRIES[i]}</h2>{document_request()}</section>'
         if page == "contact":
             body += f'''<section class="frame section contact-methods">
 <div class="contact-card"><h2>{escape(EMAIL_WHATSAPP[i])}</h2><a dir="ltr" href="mailto:info@maria.sd">info@maria.sd</a>
