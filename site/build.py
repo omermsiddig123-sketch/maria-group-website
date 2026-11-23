@@ -22,6 +22,16 @@ HERO_TEXT = (
     "一家业务涵盖工业、进口、出口及采购的苏丹企业集团，面向本地及国际市场。",
 )
 BUSINESS = ("مجالات أعمالنا", "Our businesses", "集团业务")
+HOME_ABOUT = (
+    "مجموعة أعمال سودانية تعمل في الصناعة والتجارة الدولية، وتشمل أعمالها في السودان شركة ماريا للأنشطة المتعددة المحدودة.",
+    "A Sudanese business group spanning industry and international trade, with Maria Multi Activities Co. Ltd. among its businesses in Sudan.",
+    "玛丽亚集团是一家业务涵盖工业与国际贸易的苏丹企业集团，在苏丹的业务包括 Maria Multi Activities Co. Ltd.。",
+)
+ART_LABELS = (
+    ("الصناعة", "التجارة الدولية"),
+    ("Industry", "International trade"),
+    ("工业", "国际贸易"),
+)
 MENU = ("القائمة", "Menu", "菜单")
 SKIP = ("انتقل إلى المحتوى", "Skip to content", "跳转至内容")
 RELATED = ("استكشف المزيد", "Explore further", "继续浏览")
@@ -71,6 +81,12 @@ def render(i, page):
         summary_text = f'<p>{escape(entry[3+i])}</p>' if summary else ""
         return f'<a class="card" href="{url(key)}">{emblem}<h3>{escape(entry[i])}</h3>{summary_text}<span>{DETAIL[i]}</span></a>'
 
+    def sector_panel(key, label):
+        entry = PAGES[key]
+        return f"""<a class="sector-panel sector-{key}" href="{url(key)}">
+<div class="sector-art" aria-hidden="true"></div><div class="sector-copy">
+<h3>{label}</h3><p>{escape(entry[3+i])}</p><span>{DETAIL[i]}</span></div></a>"""
+
     def cards(keys, summary=False):
         return '<div class="cards">' + "".join(card(key, summary) for key in keys) + "</div>"
 
@@ -91,7 +107,7 @@ def render(i, page):
     contact_link = link("contact", PAGES["contact"][i], "button primary", page == "contact")
     header = f'''<a class="skip" href="#content">{SKIP[i]}</a>
 <header class="header"><div class="frame header-inner">
-<a class="brand" href="{url('')}" aria-label="{HOME[i]}">{logo('maria-group-official-header.png', NAME[i], 'header-logo')}</a>
+<a class="brand" href="{url('')}" aria-label="{HOME[i]}">{logo('maria-header-web.webp', NAME[i], 'header-logo')}</a>
 <nav class="desktop-nav" aria-label="{MENU[i]}">{nav}</nav>
 <div class="header-actions"><div class="languages">{langs}</div>{contact_link}</div>
 <details class="mobile-nav"><summary>{MENU[i]}</summary><nav aria-label="{MENU[i]}">{nav}{contact_link}</nav></details>
@@ -99,12 +115,31 @@ def render(i, page):
 
     if not page:
         title, description = NAME[i], HERO_TEXT[i]
+        company = ("شركة ماريا للأنشطة المتعددة المحدودة", "Maria Multi Activities Co. Ltd.", "Maria Multi Activities Co. Ltd.")
         body = f'''<section class="hero"><div class="frame hero-inner">
-<div><p class="eyebrow">{NAME[i]}</p><h1>{HERO[i]}</h1><p class="lead">{description}</p>
+<div class="hero-copy"><p class="eyebrow">{NAME[i]}</p><h1>{HERO[i]}</h1><p class="lead">{description}</p>
 <div class="actions">{link('sectors', PAGES['sectors'][i], 'button light')}{link('partnerships', PAGES['partnerships'][i], 'button ghost')}</div></div>
-<div class="hero-art" aria-hidden="true"><div class="logo-panel">{logo('maria-group-mark.png', '', 'hero-logo')}</div></div>
+<div class="hero-art" aria-hidden="true"><div class="art-grid"></div><div class="art-beams"><i></i><i></i><i></i><i></i></div>
+<div class="art-orbit"><i></i><i></i><i></i></div><div class="art-route"><i></i><i></i><i></i></div></div>
 </div></section>
-<section class="frame section"><h2>{BUSINESS[i]}</h2>{cards(('industry','trade'), True)}</section>'''
+<section class="frame home-intro" aria-labelledby="intro-title">
+<div><h2 id="intro-title">{PAGES['about'][i]}</h2><p>{HOME_ABOUT[i]}</p></div>
+<div class="intro-links">{link('about', PAGES['about'][i], 'text-link')}{link('companies', PAGES['companies'][i], 'text-link')}</div>
+</section>
+<section class="home-sectors" aria-labelledby="sectors-title"><div class="frame">
+<h2 id="sectors-title">{BUSINESS[i]}</h2>
+<div class="sector-panels">{sector_panel('industry', ART_LABELS[i][0])}{sector_panel('trade', ART_LABELS[i][1])}</div>
+</div></section>
+<div class="frame home-portfolio">
+<section aria-labelledby="companies-title"><h2 id="companies-title">{PAGES['companies'][i]}</h2>
+<a class="company-panel" href="{url('companies')}">{logo('maria-image-01.webp', '', 'company-emblem')}<strong>{company[i]}</strong><span>{DETAIL[i]}</span></a></section>
+<section aria-labelledby="brands-title"><h2 id="brands-title">{PAGES['brands'][i]}</h2>
+<div class="brand-grid">{''.join(link(key, label, 'brand-tile') for key, label in (('rhino', 'RHINO'), ('sila', 'SILA'), ('al-afaf', 'AL AFAF')))}</div></section>
+</div>
+<section class="home-partnership"><div class="frame partnership-inner"><div>
+<h2>{PAGES['partnerships'][i]}</h2><p>{PAGES['partnerships'][3+i]}</p></div>
+<div class="actions">{link('partnerships', PAGES['partnerships'][i], 'button ghost')}{link('contact', PAGES['contact'][i], 'button light')}</div>
+</div></section>'''
     else:
         entry = PAGES[page]
         title, description = entry[i], entry[3+i]
