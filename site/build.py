@@ -39,6 +39,11 @@ DOCS = ("طلب مستندات الشركة", "Request company documents", "索�
 EMAIL_HINT = ("يفتح الزر مسودة في تطبيق البريد.", "This button opens a draft in your email app.", "此按钮会在邮件应用中打开邮件草稿。")
 ENQUIRIES = ("الاستفسارات", "Enquiries", "业务咨询")
 RODEENA = ("رودينا (RODEENA)", "RODEENA", "RODEENA")
+RODEENA_PROFILE = (
+    "شركة تجارة دولية تأسست عام 2019 ومقرها مدينة الشارقة للإعلام، الإمارات العربية المتحدة. تعمل في استيراد المواد الخام والمعدات الصناعية وتصدير المحاصيل الزراعية، وتتعاون تجارياً مع ماريا قروب مع احتفاظ كل شركة بكيانها القانوني المستقل.",
+    "An international trading company established in 2019 and based in Sharjah Media City, United Arab Emirates. It imports raw materials and industrial equipment and exports agricultural crops. RODEENA and Maria Group collaborate commercially and remain legally independent.",
+    "RODEENA 成立于 2019 年，总部位于阿联酋沙迦媒体城，从事原材料和工业设备进口以及农产品出口。RODEENA 与玛丽亚集团开展商业合作，双方各自保有独立的法律主体地位。",
+)
 MARIA_MULTI = ("شركة ماريا للأنشطة المتعددة المحدودة", "Maria Multi Activities Co. Ltd.", "Maria Multi Activities Co. Ltd.")
 INDUSTRIES = ("مصانع راينو وأنشطتها", "RHINO manufacturing", "RHINO 制造业务")
 EXPORT_PRODUCTS = ("منتجات التصدير", "Export products", "出口产品")
@@ -105,7 +110,7 @@ def render(i, page):
     def company_cards():
         return f"""<div class="company-cards">
 <article class="company-card">{logo('maria-image-01.webp', '', 'company-emblem')}<h3>{MARIA_MULTI[i]}</h3><p>{escape(PAGES['companies'][3+i])}</p></article>
-<article class="company-card"><h3>{RODEENA[i]}</h3></article>
+<article class="company-card"><h3>{RODEENA[i]}</h3><p>{RODEENA_PROFILE[i]}</p></article>
 </div>"""
 
     def document_request():
