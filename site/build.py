@@ -45,6 +45,10 @@ RODEENA_PROFILE = (
     "RODEENA 成立于 2019 年，总部位于阿联酋沙迦媒体城，从事原材料和工业设备进口以及农产品出口。RODEENA 与玛丽亚集团开展商业合作，双方各自保有独立的法律主体地位。",
 )
 MARIA_MULTI = ("شركة ماريا للأنشطة المتعددة المحدودة", "Maria Multi Activities Co. Ltd.", "Maria Multi Activities Co. Ltd.")
+RODEENA_COMPANIES = (
+    (("رودينا الإمارات", "RODEENA UAE", "RODEENA 阿联酋"), ("المركز الرئيسي لتنسيق العمليات التجارية الدولية.", "Head office for coordinating international trade operations.", "负责协调国际贸易业务的总部。")),
+    (("رودينا تنزانيا", "RODEENA Tanzania", "RODEENA 坦桑尼亚"), ("شركة مستقلة تعمل في الاستيراد والتصدير.", "An independent import and export company.", "从事进出口业务的独立公司。")),
+)
 INDUSTRIES = ("مصانع راينو وأنشطتها", "RHINO manufacturing", "RHINO 制造业务")
 EXPORT_PRODUCTS = ("منتجات التصدير", "Export products", "出口产品")
 COMPANY_LINK = ("عرض شركات المجموعة", "View group companies", "查看集团企业")
@@ -144,10 +148,21 @@ def render(i, page):
     def cards(keys, summary=False):
         return '<div class="cards">' + "".join(card(key, summary) for key in keys) + "</div>"
 
-    def company_cards():
-        return f"""<div class="company-cards">
-<article class="company-card">{logo('maria-image-01.webp', '', 'company-emblem')}<h3>{MARIA_MULTI[i]}</h3><p>{escape(PAGES['companies'][3+i])}</p></article>
-<article class="company-card"><h3>{RODEENA[i]}</h3><p>{RODEENA_PROFILE[i]}</p></article>
+    def company_groups():
+        rodeena_companies = "".join(
+            f'<article class="company-card"><h4>{name[i]}</h4><p>{description[i]}</p></article>'
+            for name, description in RODEENA_COMPANIES
+        )
+        factory_cards = cards(PAGES["industry"][6].split())
+        return f"""<div class="company-groups">
+<section class="company-group" aria-labelledby="maria-company">
+<h3 id="maria-company">{MARIA_MULTI[i]}</h3><p>{escape(PAGES['companies'][3+i])}</p>
+<h4 class="company-subheading">{INDUSTRIES[i]}</h4>{factory_cards}
+</section>
+<section class="company-group" aria-labelledby="rodeena-company">
+<h3 id="rodeena-company">{RODEENA[i]}</h3><p>{RODEENA_PROFILE[i]}</p>
+<div class="company-cards">{rodeena_companies}</div>
+</section>
 </div>"""
 
     def document_request():
@@ -188,19 +203,14 @@ def render(i, page):
 <h2 id="sectors-title">{BUSINESS[i]}</h2>
 <div class="sector-panels">{sector_panel('industry', ART_LABELS[i][0])}{sector_panel('trade', ART_LABELS[i][1])}</div>
 </div></section>
-<section class="frame section home-discovery" aria-labelledby="factories-title">
-<h2 id="factories-title">{INDUSTRIES[i]}</h2>{cards(PAGES['industry'][6].split())}
-</section>
+<section class="frame section" aria-labelledby="companies-title"><h2 id="companies-title">{PAGES['companies'][i]}</h2>
+{company_groups()}
+<p class="section-link">{link('companies', COMPANY_LINK[i], 'text-link')}</p></section>
 <section class="home-sectors" aria-labelledby="export-title"><div class="frame">
 <h2 id="export-title">{EXPORT_PRODUCTS[i]}</h2>{cards(('sesame', 'groundnuts'))}
 <p class="section-link">{link('exports', PAGES['exports'][i], 'text-link')}</p></div></section>
-<div class="frame home-portfolio">
-<section aria-labelledby="companies-title"><h2 id="companies-title">{PAGES['companies'][i]}</h2>
-{company_cards()}
-<p class="section-link">{link('companies', COMPANY_LINK[i], 'text-link')}</p></section>
-<section aria-labelledby="brands-title"><h2 id="brands-title">{PAGES['brands'][i]}</h2>
+<section class="frame section home-brands" aria-labelledby="brands-title"><h2 id="brands-title">{PAGES['brands'][i]}</h2>
 <div class="brand-grid">{''.join(link(key, label, 'brand-tile') for key, label in (('rhino', 'RHINO'), ('sila', 'SILA'), ('al-afaf', 'AL AFAF')))}</div></section>
-</div>
 <section class="home-partnership"><div class="frame partnership-inner"><div>
 <h2>{PAGES['partnerships'][i]}</h2><p>{PAGES['partnerships'][3+i]}</p></div>
 <div class="actions">{link('partnerships', PAGES['partnerships'][i], 'button ghost')}{link('contact', PAGES['contact'][i], 'button light')}</div>
@@ -224,8 +234,7 @@ def render(i, page):
             if page == "iron":
                 body += f'<section class="frame section"><h2>{RELATED[i]}</h2>{cards(("zinc", "pipes", "metal"))}</section>'
         if page == "companies":
-            body += f'<section class="frame section" aria-labelledby="companies-list"><h2 id="companies-list">{title}</h2>{company_cards()}</section>'
-            body += f'<section class="frame section"><h2>{INDUSTRIES[i]}</h2>{cards(PAGES["industry"][6].split())}<p class="section-link">{link("industry", PAGES["industry"][i], "text-link")}</p></section>'
+            body += f'<div class="frame section">{company_groups()}</div>'
         if page == "exports":
             body += f'<section class="frame section"><h2>{EXPORT_PRODUCTS[i]}</h2>{cards(("sesame", "groundnuts"), True)}<p class="section-link">{link("contact", PAGES["contact"][i], "button primary")}</p></section>'
         keys = entry[6].split()

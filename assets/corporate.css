@@ -204,3 +204,16 @@ footer { background: #efedf1; border-top: 1px solid var(--border); padding-block
 }
 .product-specs thead { background: var(--wine); color: white; }
 .product-specs tbody tr:nth-child(odd) { background: var(--surface); }
+
+.company-groups { display: grid; gap: 1.75rem; margin-block-start: 1.25rem; }
+.company-group {
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid var(--border);
+  border-block-start: 3px solid var(--wine);
+  border-radius: 8px;
+}
+.company-group > h3 { font-size: clamp(1.3rem, 3vw, 1.85rem); color: var(--wine); }
+.company-group > p { margin-block-start: .6rem; color: var(--muted); max-width: 79ch; }
+.company-subheading { margin: 1.25rem 0 0; font-size: 1.15rem; }
+.company-card h4 { margin: 0; font-size: 1.1rem; color: var(--wine); }
+.home-brands .brand-grid { margin-block-start: 1rem; }
