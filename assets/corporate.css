@@ -189,3 +189,18 @@ footer { background: #efedf1; border-top: 1px solid var(--border); padding-block
 }
 .factory-photo-oil { object-position: center 44%; }
 .photo-caption { color: var(--muted); font-size: .875rem; }
+
+.product-specs {
+  width: 100%;
+  margin-block-start: 1rem;
+  border-collapse: collapse;
+  text-align: start;
+}
+.product-specs th, .product-specs td {
+  padding: .8rem;
+  border: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+.product-specs thead { background: var(--wine); color: white; }
+.product-specs tbody tr:nth-child(odd) { background: var(--surface); }

@@ -75,6 +75,31 @@ DOCUMENT_FIELDS = (
     "申请公司：\n所需资料：\n用途：\n联系方式：",
 )
 
+SITE_ORIGIN = "https://maria-group-official-2026.onrender.com"
+SPECIFICATIONS = (
+    ("المواصفات والمقاسات", "العنصر", "المتوفر"),
+    ("Specifications and sizes", "Item", "Available"),
+    ("规格与尺寸", "项目", "供应规格"),
+)
+OIL_SPECS = (
+    (("العلامات التجارية", "Brands", "品牌"), ("حور، جودي، أبو حمزة، راينو", "Hoor, Joudi, Abu Hamza, RHINO", "Hoor、Joudi、Abu Hamza、RHINO")),
+    (("سعات العبوات لكل علامة", "Pack sizes for each brand", "各品牌包装容量"), ("4.5 و9 و18 لتر", "4.5, 9 and 18 litres", "4.5 升、9 升和 18 升")),
+)
+SHEET_SPECS = (
+    (("زنك أمريكي", "American-style roofing sheets", "美式镀锌屋面板"), ("طول 4 أو 6 متر، عرض 1.20 متر", "4 or 6 m long, 1.20 m wide", "长 4 或 6 米，宽 1.20 米")),
+    (("زنك بلدي", "Local-style roofing sheets", "本地式镀锌屋面板"), ("طول 16 أو 20 قدم، عرض 80 سم", "16 or 20 ft long, 80 cm wide", "长 16 或 20 英尺，宽 80 厘米")),
+)
+TUBE_SPECS = (
+    (("مواسير مربعة ودائرية", "Square and round tubes", "方管和圆管"), ("جميع المقاسات. حدّد المقاس والسماكة المطلوبة عند التواصل.", "All sizes. Specify the dimensions and wall thickness when contacting us.", "供应各类尺寸。联系时请注明所需尺寸及壁厚。")),
+)
+PRODUCT_SPECS = {
+    "oil": OIL_SPECS, "iron": SHEET_SPECS + TUBE_SPECS,
+    "zinc": SHEET_SPECS, "pipes": TUBE_SPECS,
+}
+
+def public_url(lang, page):
+    return SITE_ORIGIN + "/" + path_to(lang, page).removesuffix("index.html")
+
 def path_to(lang, page):
     return "/".join([part for part in ("" if lang == "ar" else lang, page, "index.html") if part])
 
@@ -189,13 +214,23 @@ def render(i, page):
 <div class="crumb">{link('', HOME[i])}<span aria-hidden="true">/</span><span>{escape(title)}</span></div>
 <div class="page-heading"><div><h1>{escape(title)}</h1><p class="lead">{escape(description)}</p></div>{emblem}</div>
 </div></section>'''
+        if page in PRODUCT_SPECS:
+            spec_title, item_label, sizes_label = SPECIFICATIONS[i]
+            rows = "".join(f'<tr><th scope="row">{item[i]}</th><td>{sizes[i]}</td></tr>'
+                           for item, sizes in PRODUCT_SPECS[page])
+            body += f"""<section class="frame section" aria-labelledby="product-specs">
+<h2 id="product-specs">{spec_title}</h2>
+<table class="product-specs"><thead><tr><th scope="col">{item_label}</th><th scope="col">{sizes_label}</th></tr></thead>
+<tbody>{rows}</tbody></table></section>"""
+            if page == "iron":
+                body += f'<section class="frame section"><h2>{RELATED[i]}</h2>{cards(("zinc", "pipes", "metal"))}</section>'
         if page == "companies":
             body += f'<section class="frame section" aria-labelledby="companies-list"><h2 id="companies-list">{title}</h2>{company_cards()}</section>'
             body += f'<section class="frame section"><h2>{INDUSTRIES[i]}</h2>{cards(PAGES["industry"][6].split())}<p class="section-link">{link("industry", PAGES["industry"][i], "text-link")}</p></section>'
         if page == "exports":
             body += f'<section class="frame section"><h2>{EXPORT_PRODUCTS[i]}</h2>{cards(("sesame", "groundnuts"), True)}<p class="section-link">{link("contact", PAGES["contact"][i], "button primary")}</p></section>'
         keys = entry[6].split()
-        if keys and page not in {"companies", "exports"}:
+        if keys and page not in {"companies", "exports", "iron"}:
             body += f'<section class="frame section"><h2>{RELATED[i]}</h2>{cards(keys, page in {"sectors", "industry", "brands", "trade"})}</section>'
         if page in {"partnerships", "contact"}:
             body += f'<section class="frame section enquiry"><h2>{ENQUIRIES[i]}</h2>{document_request()}</section>'
@@ -211,7 +246,7 @@ def render(i, page):
 {link('about',PAGES['about'][i])}{link('companies',PAGES['companies'][i])}{link('contact',PAGES['contact'][i])}</nav></div></footer>'''
     html_lang = "zh-Hans" if lang == "zh" else lang
     heading = f"{title} | {NAME[i]}" if page else title
-    alternates = "\n".join(f'<link rel="alternate" hreflang="{target if target != "zh" else "zh-Hans"}" href="{url(page,target)}">' for target in LANGS)
+    alternates = "\n".join(f'<link rel="alternate" hreflang="{target if target != "zh" else "zh-Hans"}" href="{public_url(target, page)}">' for target in LANGS)
     return location, f'''<!doctype html>
 <html lang="{html_lang}" dir="{'rtl' if lang == 'ar' else 'ltr'}">
 <head>
@@ -221,6 +256,7 @@ def render(i, page):
 <title>{escape(heading)}</title>
 <link rel="icon" href="{asset('favicon.png')}">
 <link rel="stylesheet" href="{asset('corporate.css')}">
+<link rel="canonical" href="{public_url(lang, page)}">
 {alternates}
 </head>
 <body>{header}
@@ -237,3 +273,13 @@ if __name__ == "__main__":
             destination = ROOT / path
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_text(document, encoding="utf-8")
+
+    from xml.etree import ElementTree as ET
+
+    sitemap = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
+    for language in LANGS:
+        for slug in ("", *PAGES):
+            entry = ET.SubElement(sitemap, "url")
+            ET.SubElement(entry, "loc").text = public_url(language, slug)
+    ET.indent(sitemap)
+    ET.ElementTree(sitemap).write(ROOT / "sitemap.xml", encoding="utf-8", xml_declaration=True)
