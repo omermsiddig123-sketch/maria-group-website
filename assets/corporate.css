@@ -265,3 +265,10 @@ footer { background: #efedf1; border-top: 1px solid var(--border); padding-block
   from { opacity: .45; }
   to { opacity: 1; }
 }
+
+.home-direction { padding-block-start: 0; }
+.home-direction .company-cards { margin-block-start: 0; }
+.home-direction h2 { color: var(--wine); font-size: clamp(1.3rem, 2.4vw, 1.8rem); }
+.home-direction ul { margin-block: .65rem 0; padding-inline-start: 1.25rem; color: var(--muted); }
+.contact-channel-list { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-block-start: .75rem; }
+.contact-channel-list a { color: white; }

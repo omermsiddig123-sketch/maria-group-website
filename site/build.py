@@ -11,8 +11,7 @@ LANGS = ("ar", "en", "zh")
 LABELS = ("العربية", "English", "简体中文")
 NAME = ("ماريا قروب المحدودة", "Maria Group Co. Ltd.", "玛丽亚集团")
 NAV = {"about": {"about", "companies"}, "sectors": {"sectors", "industry", "trade"},
-       "brands": {"brands", "rhino", "sila", "al-afaf"}, "products": {"products", "food", "metal"},
-       "partnerships": {"partnerships", "contact"}}
+       "brands": {"brands", "rhino", "sila", "al-afaf"}, "products": {"products", "food", "metal"}}
 HOME = ("الرئيسية", "Home", "首页")
 DETAIL = ("استكشف", "Explore", "查看详情")
 HERO = ("الصناعة والتجارة الدولية", "Industry and international trade", "工业与国际贸易")
@@ -27,6 +26,17 @@ HOME_ABOUT = (
     "A Sudanese business group spanning industry and international trade, with Maria Multi Activities Co. Ltd. among its businesses in Sudan.",
     "玛丽亚集团是一家业务涵盖工业与国际贸易的苏丹企业集团，在苏丹的业务包括 Maria Multi Activities Co. Ltd.。",
 )
+HOME_VISION = (
+    ("الرؤية", "تطوير محفظة أعمال متنوعة في الصناعة والتجارة الدولية وبناء علاقات تجارية طويلة الأمد."),
+    ("Vision", "Build a diversified portfolio in industry and international trade and develop lasting commercial relationships."),
+    ("愿景", "发展涵盖工业与国际贸易的多元化业务，并建立长期商业合作关系。"),
+)
+HOME_GOALS = (
+    ("الأهداف", ("تطوير الأنشطة الصناعية والمنتجات المحلية.", "توسيع فرص تصدير المنتجات السودانية.", "توفير احتياجات السوق من السلع ومدخلات الإنتاج.")),
+    ("Objectives", ("Develop industrial operations and local products.", "Expand export opportunities for Sudanese products.", "Supply goods and production inputs required by the market.")),
+    ("目标", ("发展工业业务和本地产品。", "拓展苏丹产品的出口机会。", "供应市场所需的商品和生产投入品。")),
+)
+CONTACT_CHANNELS = ("قنوات التواصل", "Contact channels", "联系方式")
 ART_LABELS = (
     ("الصناعة", "التجارة الدولية"),
     ("Industry", "International trade"),
@@ -215,13 +225,18 @@ def render(i, page):
         title, description = NAME[i], HERO_TEXT[i]
         body = f'''<section class="hero"><div class="frame hero-inner">
 <div class="hero-copy"><p class="eyebrow">{NAME[i]}</p><h1>{HERO[i]}</h1><p class="lead">{description}</p>
-<div class="actions">{link('sectors', PAGES['sectors'][i], 'button light')}{link('partnerships', PAGES['partnerships'][i], 'button ghost')}</div></div>
+<div class="actions">{link('sectors', PAGES['sectors'][i], 'button light')}{link('contact', PAGES['contact'][i], 'button ghost')}</div></div>
 {hero_gallery()}
 </div></section>
 <section class="frame home-intro" aria-labelledby="intro-title">
 <div><h2 id="intro-title">{PAGES['about'][i]}</h2><p>{HOME_ABOUT[i]}</p></div>
 <div class="intro-links">{link('about', PAGES['about'][i], 'text-link')}{link('companies', PAGES['companies'][i], 'text-link')}</div>
 </section>
+<section class="frame section home-direction">
+<div class="company-cards">
+<article class="company-card"><h2>{HOME_VISION[i][0]}</h2><p>{HOME_VISION[i][1]}</p></article>
+<article class="company-card"><h2>{HOME_GOALS[i][0]}</h2><ul>{''.join(f'<li>{goal}</li>' for goal in HOME_GOALS[i][1])}</ul></article>
+</div></section>
 <section class="home-sectors" aria-labelledby="sectors-title"><div class="frame">
 <h2 id="sectors-title">{BUSINESS[i]}</h2>
 <div class="sector-panels">{sector_panel('industry', ART_LABELS[i][0])}{sector_panel('trade', ART_LABELS[i][1])}</div>
@@ -234,9 +249,14 @@ def render(i, page):
 <p class="section-link">{link('exports', PAGES['exports'][i], 'text-link')}</p></div></section>
 <section class="frame section home-brands" aria-labelledby="brands-title"><h2 id="brands-title">{PAGES['brands'][i]}</h2>
 <div class="brand-grid">{''.join(link(key, label, 'brand-tile') for key, label in (('rhino', 'RHINO'), ('sila', 'SILA'), ('al-afaf', 'AL AFAF')))}</div></section>
-<section class="home-partnership"><div class="frame partnership-inner"><div>
-<h2>{PAGES['partnerships'][i]}</h2><p>{PAGES['partnerships'][3+i]}</p></div>
-<div class="actions">{link('partnerships', PAGES['partnerships'][i], 'button ghost')}{link('contact', PAGES['contact'][i], 'button light')}</div>
+<section class="home-partnership" aria-labelledby="home-contact"><div class="frame partnership-inner"><div>
+<h2 id="home-contact">{CONTACT_CHANNELS[i]}</h2>
+<div class="contact-channel-list">
+<a href="mailto:info@maria.sd" dir="ltr">info@maria.sd</a>
+<a href="https://wa.me/249912336204" dir="ltr">WhatsApp +249 912336204</a>
+<a href="tel:+249912500211" dir="ltr">+249 912500211</a>
+</div></div>
+<div class="actions"><a class="button ghost" href="{url('contact')}#wechat-qr">WeChat</a>{link('contact', PAGES['contact'][i], 'button light')}</div>
 </div></section>'''
     else:
         entry = PAGES[page]
@@ -263,7 +283,7 @@ def render(i, page):
         keys = entry[6].split()
         if keys and page not in {"companies", "exports", "iron"}:
             body += f'<section class="frame section"><h2>{RELATED[i]}</h2>{cards(keys, page in {"sectors", "industry", "brands", "trade"})}</section>'
-        if page in {"partnerships", "contact"}:
+        if page == "contact":
             body += f'<section class="frame section enquiry"><h2>{ENQUIRIES[i]}</h2>{document_request()}</section>'
         if page == "contact":
             body += f'''<section class="frame section contact-methods">
