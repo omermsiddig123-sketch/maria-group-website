@@ -217,3 +217,51 @@ footer { background: #efedf1; border-top: 1px solid var(--border); padding-block
 .company-subheading { margin: 1.25rem 0 0; font-size: 1.15rem; }
 .company-card h4 { margin: 0; font-size: 1.1rem; color: var(--wine); }
 .home-brands .brand-grid { margin-block-start: 1rem; }
+
+.hero-gallery { min-width: 0; }
+.gallery-slide { margin: 0; position: relative; background: var(--deep); }
+.gallery-slide img {
+  width: 100%;
+  aspect-ratio: 5 / 4;
+  object-fit: cover;
+  display: block;
+}
+.gallery-slide figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .25rem 1rem;
+  padding: .75rem 1rem;
+  background: var(--deep);
+  align-items: baseline;
+  min-height: 3.75rem;
+}
+.gallery-slide a { color: white; font-weight: 650; }
+.gallery-slide small { color: var(--silver); }
+.gallery-controls:not([hidden]) { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .65rem; }
+.gallery-controls button {
+  color: white;
+  background: transparent;
+  border: 1px solid #e2cbd9;
+  border-radius: 6px;
+  min-height: 2.75rem;
+  padding: .45rem .85rem;
+  cursor: pointer;
+  font: inherit;
+}
+.gallery-controls button:hover, .gallery-controls button:focus-visible {
+  background: white;
+  color: var(--wine);
+}
+@media (max-width: 42rem) {
+  .gallery-slide img { aspect-ratio: 16 / 10; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gallery-slide:not([hidden]) img { animation: gallery-appear .5s ease-out; }
+  .card .factory-photo { transition: transform .25s ease; }
+  .card:is(:hover, :focus-visible) .factory-photo { transform: scale(1.025); }
+}
+@keyframes gallery-appear {
+  from { opacity: .45; }
+  to { opacity: 1; }
+}

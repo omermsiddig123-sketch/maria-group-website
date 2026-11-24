@@ -59,6 +59,11 @@ FACTORY_IMAGES = {
     "iron": ("rhino-iron-illustration.jpg", ("رسم توضيحي لتشكيل الحديد", "Steel forming illustration", "钢材成型示意图")),
     "biscuits": ("spider-biscuits-illustration.webp", ("تصميم توضيحي لبسكويت SPIDER", "SPIDER biscuit concept illustration", "SPIDER 饼干概念示意图")),
 }
+GALLERY_LABELS = (
+    ("معرض القطاعات الصناعية", "السابق", "التالي", "إيقاف", "تشغيل"),
+    ("Industrial gallery", "Previous", "Next", "Pause", "Play"),
+    ("工业业务图片", "上一张", "下一张", "暂停", "播放"),
+)
 ILLUSTRATION = ("صورة توضيحية", "Illustrative image", "示意图")
 FACTORY_STATUS = dict.fromkeys(("oil", "iron", "biscuits"), STATUS_ACTIVE)
 FACTORY_STATUS.update(dict.fromkeys(("beverages", "tomato"), STATUS_SOON))
@@ -124,6 +129,25 @@ def render(i, page):
 
     def logo(filename, label, style):
         return f'<img class="{style}" src="{asset(filename)}" alt="{escape(label)}">'
+
+    def hero_gallery():
+        name, previous, following, pause, play = GALLERY_LABELS[i]
+        slides = []
+        for key, (filename, labels) in FACTORY_IMAGES.items():
+            is_first = not slides
+            visibility = "" if is_first else " hidden"
+            loading = ' fetchpriority="high"' if is_first else ' loading="lazy"'
+            slides.append(f"""<figure class="gallery-slide"{visibility}>
+<img src="{asset(filename)}" alt="{escape(labels[i])}"{loading}>
+<figcaption>{link(key, PAGES[key][i])}<small>{ILLUSTRATION[i]}</small></figcaption>
+</figure>""")
+        return f"""<section class="hero-gallery" aria-label="{name}" data-gallery>
+<div class="gallery-slides">{''.join(slides)}</div>
+<div class="gallery-controls" hidden>
+<button type="button" data-previous>{previous}</button>
+<button type="button" data-next>{following}</button>
+<button type="button" data-toggle data-pause="{pause}" data-play="{play}">{pause}</button>
+</div></section>"""
 
     def card(key, summary=False):
         entry = PAGES[key]
@@ -192,8 +216,7 @@ def render(i, page):
         body = f'''<section class="hero"><div class="frame hero-inner">
 <div class="hero-copy"><p class="eyebrow">{NAME[i]}</p><h1>{HERO[i]}</h1><p class="lead">{description}</p>
 <div class="actions">{link('sectors', PAGES['sectors'][i], 'button light')}{link('partnerships', PAGES['partnerships'][i], 'button ghost')}</div></div>
-<div class="hero-art" aria-hidden="true"><div class="art-grid"></div><div class="art-beams"><i></i><i></i><i></i><i></i></div>
-<div class="art-orbit"><i></i><i></i><i></i></div><div class="art-route"><i></i><i></i><i></i></div></div>
+{hero_gallery()}
 </div></section>
 <section class="frame home-intro" aria-labelledby="intro-title">
 <div><h2 id="intro-title">{PAGES['about'][i]}</h2><p>{HOME_ABOUT[i]}</p></div>
@@ -252,6 +275,7 @@ def render(i, page):
     footer = f'''<footer><div class="frame footer-inner"><div><strong>{NAME[i]}</strong>
 {footer_name}</div><nav aria-label="{MENU[i]}">
 {link('about',PAGES['about'][i])}{link('companies',PAGES['companies'][i])}{link('contact',PAGES['contact'][i])}</nav></div></footer>'''
+    gallery_script = f'<script src="{asset("hero-gallery.js")}" defer></script>' if not page else ""
     html_lang = "zh-Hans" if lang == "zh" else lang
     heading = f"{title} | {NAME[i]}" if page else title
     alternates = "\n".join(f'<link rel="alternate" hreflang="{target if target != "zh" else "zh-Hans"}" href="{public_url(target, page)}">' for target in LANGS)
@@ -270,7 +294,7 @@ def render(i, page):
 <body>{header}
 <main id="content" tabindex="-1">{body}</main>
 {footer}
-</body>
+{gallery_script}</body>
 </html>
 '''
 

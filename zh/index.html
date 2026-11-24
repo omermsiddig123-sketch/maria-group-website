@@ -22,8 +22,22 @@
 <main id="content" tabindex="-1"><section class="hero"><div class="frame hero-inner">
 <div class="hero-copy"><p class="eyebrow">玛丽亚集团</p><h1>工业与国际贸易</h1><p class="lead">一家业务涵盖工业、进口、出口及采购的苏丹企业集团，面向本地及国际市场。</p>
 <div class="actions"><a class="button light" href="sectors/index.html">业务领域</a><a class="button ghost" href="partnerships/index.html">商业合作</a></div></div>
-<div class="hero-art" aria-hidden="true"><div class="art-grid"></div><div class="art-beams"><i></i><i></i><i></i><i></i></div>
-<div class="art-orbit"><i></i><i></i><i></i></div><div class="art-route"><i></i><i></i><i></i></div></div>
+<section class="hero-gallery" aria-label="工业业务图片" data-gallery>
+<div class="gallery-slides"><figure class="gallery-slide">
+<img src="../assets/rhino-oil-illustration.jpg" alt="食用油生产示意图" fetchpriority="high">
+<figcaption><a class="" href="oil/index.html">RHINO 食用油</a><small>示意图</small></figcaption>
+</figure><figure class="gallery-slide" hidden>
+<img src="../assets/rhino-iron-illustration.jpg" alt="钢材成型示意图" loading="lazy">
+<figcaption><a class="" href="iron/index.html">RHINO 铁制品</a><small>示意图</small></figcaption>
+</figure><figure class="gallery-slide" hidden>
+<img src="../assets/spider-biscuits-illustration.webp" alt="SPIDER 饼干概念示意图" loading="lazy">
+<figcaption><a class="" href="biscuits/index.html">RHINO 饼干及烘焙食品</a><small>示意图</small></figcaption>
+</figure></div>
+<div class="gallery-controls" hidden>
+<button type="button" data-previous>上一张</button>
+<button type="button" data-next>下一张</button>
+<button type="button" data-toggle data-pause="暂停" data-play="播放">暂停</button>
+</div></section>
 </div></section>
 <section class="frame home-intro" aria-labelledby="intro-title">
 <div><h2 id="intro-title">集团简介</h2><p>玛丽亚集团是一家业务涵盖工业与国际贸易的苏丹企业集团，在苏丹的业务包括 Maria Multi Activities Co. Ltd.。</p></div>
@@ -61,5 +75,5 @@
 <footer><div class="frame footer-inner"><div><strong>玛丽亚集团</strong>
 <span dir="ltr" lang="en">Maria Group Co. Ltd.</span></div><nav aria-label="菜单">
 <a class="" href="about/index.html">集团简介</a><a class="" href="companies/index.html">集团企业</a><a class="" href="contact/index.html">联系我们</a></nav></div></footer>
-</body>
+<script src="../assets/hero-gallery.js" defer></script></body>
 </html>
