@@ -51,11 +51,11 @@ COMPANY_LINK = ("عرض شركات المجموعة", "View group companies", "�
 STATUS_ACTIVE = ("قيد التشغيل", "Operational", "已投产")
 STATUS_SOON = ("قريباً", "Coming soon", "即将推出")
 FACTORY_IMAGES = {
-    "oil": ("rhino-oil-equipment.webp", ("معدات مصنع راينو للزيوت", "RHINO edible oil equipment", "RHINO 食用油生产设备")),
-    "iron": ("rhino-iron-line.webp", ("خط تشكيل الحديد في مصنع راينو", "RHINO steel forming line", "RHINO 钢材成型生产线")),
+    "oil": ("rhino-oil-illustration.jpg", ("رسم توضيحي لإنتاج زيوت الطعام", "Edible oil production illustration", "食用油生产示意图")),
+    "iron": ("rhino-iron-illustration.jpg", ("رسم توضيحي لتشكيل الحديد", "Steel forming illustration", "钢材成型示意图")),
     "biscuits": ("spider-biscuits-illustration.webp", ("تصميم توضيحي لبسكويت SPIDER", "SPIDER biscuit concept illustration", "SPIDER 饼干概念示意图")),
 }
-ILLUSTRATION = ("تصميم توضيحي للمنتج", "Product concept illustration", "产品概念示意图")
+ILLUSTRATION = ("صورة توضيحية", "Illustrative image", "示意图")
 FACTORY_STATUS = dict.fromkeys(("oil", "iron", "biscuits"), STATUS_ACTIVE)
 FACTORY_STATUS.update(dict.fromkeys(("beverages", "tomato"), STATUS_SOON))
 
@@ -130,8 +130,7 @@ def render(i, page):
             filename, labels = FACTORY_IMAGES[key]
             photo = f'<img class="factory-photo factory-photo-{key}" src="{asset(filename)}" alt="{escape(labels[i])}" loading="lazy" decoding="async">'
             emblem = ""
-            if key == "biscuits":
-                photo += f'<small class="photo-caption">{ILLUSTRATION[i]}</small>'
+            photo += f'<small class="photo-caption">{ILLUSTRATION[i]}</small>'
         status = FACTORY_STATUS.get(key)
         status_text = f'<small class="factory-status">{status[i]}</small>' if status else ""
         return f'<a class="card" href="{url(key)}">{photo}{emblem}{status_text}<h3>{escape(entry[i])}</h3>{summary_text}<span>{DETAIL[i]}</span></a>'
