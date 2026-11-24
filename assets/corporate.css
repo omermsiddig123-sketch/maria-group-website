@@ -179,3 +179,13 @@ footer { background: #efedf1; border-top: 1px solid var(--border); padding-block
 .company-card img { margin-block-end: .65rem; }
 .section-link { margin-block-start: 1.15rem; }
 .factory-status { color: var(--muted); font-weight: 600; font-size: .875rem; }
+
+.factory-photo {
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 4px;
+  background-color: var(--border);
+}
+.factory-photo-oil { object-position: center 44%; }
+.photo-caption { color: var(--muted); font-size: .875rem; }

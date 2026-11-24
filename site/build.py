@@ -50,6 +50,12 @@ EXPORT_PRODUCTS = ("منتجات التصدير", "Export products", "出口产�
 COMPANY_LINK = ("عرض شركات المجموعة", "View group companies", "查看集团企业")
 STATUS_ACTIVE = ("قيد التشغيل", "Operational", "已投产")
 STATUS_SOON = ("قريباً", "Coming soon", "即将推出")
+FACTORY_IMAGES = {
+    "oil": ("rhino-oil-equipment.webp", ("معدات مصنع راينو للزيوت", "RHINO edible oil equipment", "RHINO 食用油生产设备")),
+    "iron": ("rhino-iron-line.webp", ("خط تشكيل الحديد في مصنع راينو", "RHINO steel forming line", "RHINO 钢材成型生产线")),
+    "biscuits": ("spider-biscuits-illustration.webp", ("تصميم توضيحي لبسكويت SPIDER", "SPIDER biscuit concept illustration", "SPIDER 饼干概念示意图")),
+}
+ILLUSTRATION = ("تصميم توضيحي للمنتج", "Product concept illustration", "产品概念示意图")
 FACTORY_STATUS = dict.fromkeys(("oil", "iron", "biscuits"), STATUS_ACTIVE)
 FACTORY_STATUS.update(dict.fromkeys(("beverages", "tomato"), STATUS_SOON))
 
@@ -94,9 +100,16 @@ def render(i, page):
         entry = PAGES[key]
         emblem = logo(f"maria-image-{entry[7]}.webp", "", "card-image") if len(entry) > 7 else ""
         summary_text = f'<p>{escape(entry[3+i])}</p>' if summary else ""
+        photo = ""
+        if key in FACTORY_IMAGES:
+            filename, labels = FACTORY_IMAGES[key]
+            photo = f'<img class="factory-photo factory-photo-{key}" src="{asset(filename)}" alt="{escape(labels[i])}" loading="lazy" decoding="async">'
+            emblem = ""
+            if key == "biscuits":
+                photo += f'<small class="photo-caption">{ILLUSTRATION[i]}</small>'
         status = FACTORY_STATUS.get(key)
         status_text = f'<small class="factory-status">{status[i]}</small>' if status else ""
-        return f'<a class="card" href="{url(key)}">{emblem}{status_text}<h3>{escape(entry[i])}</h3>{summary_text}<span>{DETAIL[i]}</span></a>'
+        return f'<a class="card" href="{url(key)}">{photo}{emblem}{status_text}<h3>{escape(entry[i])}</h3>{summary_text}<span>{DETAIL[i]}</span></a>'
 
     def sector_panel(key, label):
         entry = PAGES[key]
