@@ -10,7 +10,7 @@ PAGES = json.loads((ROOT / "site/content.json").read_text(encoding="utf-8"))
 LANGS = ("ar", "en", "zh")
 LABELS = ("العربية", "English", "简体中文")
 NAME = ("ماريا قروب المحدودة", "Maria Group Co. Ltd.", "玛丽亚集团")
-NAV = {"about": {"about", "companies"}, "sectors": {"sectors", "industry", "trade"},
+NAV = {"about": {"about", "companies", "rodeena"}, "sectors": {"sectors", "industry", "trade"},
        "brands": {"brands", "rhino", "sila", "al-afaf"}, "products": {"products", "food", "metal"}}
 HOME = ("الرئيسية", "Home", "首页")
 DETAIL = ("استكشف", "Explore", "查看详情")
@@ -56,8 +56,18 @@ RODEENA_PROFILE = (
 )
 MARIA_MULTI = ("شركة ماريا للأنشطة المتعددة المحدودة", "Maria Multi Activities Co. Ltd.", "Maria Multi Activities Co. Ltd.")
 RODEENA_COMPANIES = (
-    (("رودينا الإمارات", "RODEENA UAE", "RODEENA 阿联酋"), ("المركز الرئيسي لتنسيق العمليات التجارية الدولية.", "Head office for coordinating international trade operations.", "负责协调国际贸易业务的总部。")),
-    (("رودينا تنزانيا", "RODEENA Tanzania", "RODEENA 坦桑尼亚"), ("شركة مستقلة تعمل في الاستيراد والتصدير.", "An independent import and export company.", "从事进出口业务的独立公司。")),
+    ("uae", ("رودينا الإمارات", "RODEENA UAE", "RODEENA 阿联酋"), ("مقرها مدينة الشارقة للإعلام، وتنسّق عمليات التجارة الدولية.", "Based in Sharjah Media City, it coordinates international trade operations.", "位于沙迦媒体城，负责协调国际贸易业务。")),
+    ("tanzania", ("رودينا تنزانيا", "RODEENA Tanzania", "RODEENA 坦桑尼亚"), ("شركة مستقلة تعمل في الاستيراد والتصدير في تنزانيا.", "An independent company engaged in imports and exports in Tanzania.", "在坦桑尼亚从事进出口业务的独立公司。")),
+)
+RODEENA_DETAILS = (
+    (("الصادرات", "Exports", "出口"), ("السمسم، القطن، الفول السوداني، فول الصويا، ومحاصيل زراعية أخرى.", "Sesame, cotton, groundnuts, soybeans and other agricultural crops.", "芝麻、棉花、花生、大豆及其他农产品。")),
+    (("الواردات", "Imports", "进口"), ("المواد الخام ومستلزمات الإنتاج، والآلات والمعدات وخطوط الإنتاج، والزيوت والصلصات والسلع التجارية.", "Raw materials and production supplies, machinery, equipment and production lines, oils, sauces and other traded goods.", "原材料及生产投入品、机械设备和生产线、油类、酱料及其他贸易商品。")),
+    (("الأسواق والعلاقات التجارية", "Markets and trade relationships", "市场与贸易关系"), ("الإمارات، الصين، تركيا، المملكة المتحدة، تنزانيا، بنين وتوغو.", "United Arab Emirates, China, Türkiye, United Kingdom, Tanzania, Benin and Togo.", "阿联酋、中国、土耳其、英国、坦桑尼亚、贝宁和多哥。")),
+)
+RODEENA_RELATIONSHIP = (
+    "تتعاون رودينا تجارياً مع ماريا قروب في السودان، وتحتفظ كل شركة بكيانها القانوني المستقل.",
+    "RODEENA and Maria Group in Sudan work together commercially and remain legally independent.",
+    "RODEENA 与苏丹的玛丽亚集团开展商业合作，双方各自保有独立的法律主体地位。",
 )
 INDUSTRIES = ("مصانع راينو وأنشطتها", "RHINO manufacturing", "RHINO 制造业务")
 EXPORT_PRODUCTS = ("منتجات التصدير", "Export products", "出口产品")
@@ -184,8 +194,8 @@ def render(i, page):
 
     def company_groups():
         rodeena_companies = "".join(
-            f'<article class="company-card"><h4>{name[i]}</h4><p>{description[i]}</p></article>'
-            for name, description in RODEENA_COMPANIES
+            f'<a class="company-card company-card-link" href="{url('rodeena')}#{slug}"><h4>{name[i]}</h4><p>{description[i]}</p></a>'
+            for slug, name, description in RODEENA_COMPANIES
         )
         factory_cards = cards(PAGES["industry"][6].split())
         return f"""<div class="company-groups">
@@ -194,7 +204,7 @@ def render(i, page):
 <h4 class="company-subheading">{INDUSTRIES[i]}</h4>{factory_cards}
 </section>
 <section class="company-group" aria-labelledby="rodeena-company">
-<h3 id="rodeena-company">{RODEENA[i]}</h3><p>{RODEENA_PROFILE[i]}</p>
+<h3 id="rodeena-company">{link('rodeena', RODEENA[i], 'text-link')}</h3><p>{RODEENA_PROFILE[i]}</p>
 <div class="company-cards">{rodeena_companies}</div>
 </section>
 </div>"""
@@ -276,6 +286,21 @@ def render(i, page):
 <tbody>{rows}</tbody></table></section>"""
             if page == "iron":
                 body += f'<section class="frame section"><h2>{RELATED[i]}</h2>{cards(("zinc", "pipes", "metal"))}</section>'
+        if page == "rodeena":
+            offices = "".join(
+                f'<article class="company-card" id="{slug}"><h3>{name[i]}</h3><p>{description[i]}</p></article>'
+                for slug, name, description in RODEENA_COMPANIES
+            )
+            details = "".join(
+                f'<article class="company-card"><h3>{label[i]}</h3><p>{description[i]}</p></article>'
+                for label, description in RODEENA_DETAILS
+            )
+            body += f"""<section class="frame section">
+<p>{RODEENA_RELATIONSHIP[i]}</p>
+<div class="company-cards">{offices}</div>
+<div class="company-cards">{details}</div>
+<p class="section-link">{link("companies", PAGES["companies"][i], "text-link")}</p>
+</section>"""
         if page == "companies":
             body += f'<div class="frame section">{company_groups()}</div>'
         if page == "exports":

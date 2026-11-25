@@ -272,3 +272,10 @@ footer { background: #efedf1; border-top: 1px solid var(--border); padding-block
 .home-direction ul { margin-block: .65rem 0; padding-inline-start: 1.25rem; color: var(--muted); }
 .contact-channel-list { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin-block-start: .75rem; }
 .contact-channel-list a { color: white; }
+
+.company-card-link {
+  display: block;
+  text-decoration: none;
+}
+.company-card-link h4 { text-decoration: underline; text-underline-offset: .18em; }
+.company-card-link:hover { border-color: var(--wine); }
